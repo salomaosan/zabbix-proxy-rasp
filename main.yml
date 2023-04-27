@@ -1,0 +1,6 @@
+- hosts: all
+  gather_facts: no
+
+  roles:
+  - { role: install-proxy, tags: ["install-proxy"] }
+  - { role: install-agent, tags: ["install-agent"] }

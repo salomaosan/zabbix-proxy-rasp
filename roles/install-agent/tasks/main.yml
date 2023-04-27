@@ -1,0 +1,3 @@
+---
+# tasks file for install-agent
+- include_tasks: install-agent.yml

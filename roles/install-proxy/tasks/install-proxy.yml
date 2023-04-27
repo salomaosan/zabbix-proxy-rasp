@@ -1,0 +1,43 @@
+---
+- name: Download zabbix repo
+  get_url:
+    url: "{{ repo_url }}"
+    dest: /tmp/zabbix-release.deb
+
+- name: Install zabbix repo
+  apt:
+    deb: /tmp/zabbix-release.deb
+
+- name: Install zabbix-proxy-sqlite3
+  apt:
+    name: zabbix-proxy-sqlite3
+    update_cache: yes
+
+- name: Alterando o parametro >Server< do Proxy
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '(^Server=).*$'
+    replace: '\g<1>{{ server }}'
+
+- name: Alterando o parametro >DBName< do Proxy
+  replace:
+    path: /etc/zabbix/zabbix_proxy.conf
+    regexp: '(^DBName=).*$'
+    replace: '\g<1>/tmp/zabbix-proxy.db'
+    backup: yes
+
+
+- name: Reiniciando o proxy
+  service:
+    name: zabbix-proxy
+    state: restarted
+
+- name: Verificando o status do proxy
+  service:
+    name: zabbix-proxy
+    state: started
+  register: service
+
+- debug:
+    msg: ">> {{ service.status.Names  }} : {{ service.status.ActiveState }} : {{ service.status.SubState }}"
+...
