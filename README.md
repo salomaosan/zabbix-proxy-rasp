@@ -1,8 +1,11 @@
+### PARA INSTALAÇÃO PADRÃO 
 
+ansible-playbook -i hosts main.yml -e "SERVER=127.0.0.1"
 
-* aparece a quanto tempo esta em manutenção no grafana
+### PARA INSTALAÇÃO SOMENTE DO PROXY 
 
+ansible-playbook -i hosts main.yml -e "SERVER=127.0.0.1" --tag "install-proxy"
 
-* ajustes passado por email
-* dependencia de alertas
-* relatorio de alertas historicos
+### PARA INSTALAÇÃO SOMENTE DO AGENTE 
+
+ansible-playbook -i hosts main.yml --tags "install-agent"
