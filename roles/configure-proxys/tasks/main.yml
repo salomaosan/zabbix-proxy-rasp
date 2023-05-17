@@ -1,0 +1,4 @@
+---
+# tasks file for configure-proxys
+
+- include_tasks: configure-proxys.yml

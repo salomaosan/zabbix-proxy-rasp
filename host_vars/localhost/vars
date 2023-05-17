@@ -1,0 +1,20 @@
+env:
+  prod:
+    type: prod
+    descr: Zabbix Proxy Production
+    server: 137.184.125.183
+    listenport: 10051
+    logfile: /var/log/zabbix-proxy/zabbix_proxy_prod.log
+    pidfile: /run/zabbix/zabbix_proxy_prod.pid
+    socketdir: /tmp/zabbix_proxy_prod
+    dbname: /tmp/zabbix_proxy_prod/zabbix-proxy.db
+
+  stage:
+    type: stage
+    descr: Zabbix Proxy Stage
+    server: 137.184.125.183
+    listenport: 10041
+    logfile: /var/log/zabbix-proxy/zabbix_proxy_stage.log
+    pidfile: /run/zabbix/zabbix_proxy_stage.pid
+    socketdir: /tmp/zabbix_proxy_stage
+    dbname: /tmp/zabbix_proxy_stage/zabbix-proxy.db

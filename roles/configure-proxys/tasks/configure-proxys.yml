@@ -1,0 +1,56 @@
+- name: return motd to registered var
+  command: ls /lib/systemd/system/zabbix-proxy.service
+  register: exist
+  ignore_errors: true
+    
+- name: Copy files from foo to bar
+  copy: 
+    remote_src: True 
+    src: /lib/systemd/system/zabbix-proxy.service 
+    dest: /lib/systemd/system/zabbix-proxy.service.old
+  when: exist.rc == 0
+
+- name: backuping zabbix-proxy.service file
+  file:
+    path: /lib/systemd/system/zabbix-proxy.service
+    state: absent
+  when: exist.rc == 0
+
+- name: Template a file, using symbolic modes (equivalent to 0644)
+  template:
+    src: zabbix_proxy.service.j2
+    dest: /lib/systemd/system/zabbix-proxy-{{  item.type  }}.service
+    mode: u=rw,g=r,o=r
+  loop:
+    - "{{  env.prod  }}"
+    - "{{  env.stage  }}"
+
+- name: Template a file, using symbolic modes (equivalent to 0644)
+  template:
+    src: zabbix_proxy.conf.j2
+    dest: /etc/zabbix/zabbix_proxy_{{  item.type  }}.conf
+    mode: u=rwx,g=rx,o=rx
+  loop:
+    - "{{  env.prod  }}"
+    - "{{  env.stage  }}"
+
+- name: Create a directory if it does not exist
+  file:
+    path: "{{  item  }}"
+    state: directory
+    mode: '0777'
+  loop:
+    - "{{  env.prod.socketdir  }}"
+    - "{{  env.stage.socketdir  }}"
+
+- name: just force systemd to reread configs (2.4 and above)
+  systemd:
+    daemon_reload: yes
+
+- name: restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    name: zabbix-proxy-{{  item  }}
+  loop:
+    - "{{  env.prod.type  }}"
+    - "{{  env.stage.type  }}"
