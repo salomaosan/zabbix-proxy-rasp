@@ -13,25 +13,24 @@
     name: zabbix-proxy-sqlite3
     update_cache: yes
 
-- name: Alterando o parametro >Server< do Proxy
-  replace:
-    path: /etc/zabbix/zabbix_proxy.conf
-    regexp: '(^Server=).*$'
-    replace: '\g<1>{{ server }}'
-
-- name: Alterando o parametro >DBName< do Proxy
-  replace:
-    path: /etc/zabbix/zabbix_proxy.conf
-    regexp: '(^DBName=).*$'
-    replace: '\g<1>/tmp/zabbix-proxy.db'
-    backup: yes
-
-
-- name: Reiniciando o proxy
-  service:
-    name: zabbix-proxy
-    state: restarted
-
+#- name: Alterando o parametro >Server< do Proxy
+#  replace:
+#    path: /etc/zabbix/zabbix_proxy.conf
+#    regexp: '(^Server=).*$'
+#    replace: '\g<1>{{ server }}'
+#
+#- name: Alterando o parametro >DBName< do Proxy
+#  replace:
+#    path: /etc/zabbix/zabbix_proxy.conf
+#    regexp: '(^DBName=).*$'
+#    replace: '\g<1>/tmp/zabbix-proxy.db'
+#    backup: yes
+#
+#- name: Reiniciando o proxy
+#  service:
+#    name: zabbix-proxy
+#    state: restarted
+#
 - name: Verificando o status do proxy
   service:
     name: zabbix-proxy

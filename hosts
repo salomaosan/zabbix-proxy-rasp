@@ -1,7 +1,9 @@
 [all]
 192.168.3.137
+#localhost
 
 [all:vars]
+#ansible_connection=local
 ansible_user=salomao
 ansible_password=123579
 ansible_become=yes
