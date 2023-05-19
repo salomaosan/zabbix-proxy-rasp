@@ -1,22 +1,22 @@
-- name: return motd to registered var
+- name: Verificando se existe o arquivo de serviço do zabbix proxy
   command: ls /lib/systemd/system/zabbix-proxy.service
-  register: exist
+  register: exist-service
   ignore_errors: true
     
-- name: Copy files from foo to bar
-  copy: 
-    remote_src: True 
-    src: /lib/systemd/system/zabbix-proxy.service 
-    dest: /lib/systemd/system/zabbix-proxy.service.old
-  when: exist.rc == 0
+#- name: Copy files from foo to bar
+#  copy: 
+#    remote_src: True 
+#    src: /lib/systemd/system/zabbix-proxy.service 
+#    dest: /tmp/zabbix-proxy.service.old
+#  when: exist.rc == 0
 
-- name: backuping zabbix-proxy.service file
+- name: Removendo arquivo de serviço anterior
   file:
     path: /lib/systemd/system/zabbix-proxy.service
     state: absent
-  when: exist.rc == 0
+  when: exist-service.rc == 0
 
-- name: Template a file, using symbolic modes (equivalent to 0644)
+- name: Criando novos arquivos de serviço para zabbix-proxy stage e prod
   template:
     src: zabbix_proxy.service.j2
     dest: /lib/systemd/system/zabbix-proxy-{{  item.type  }}.service
@@ -25,7 +25,18 @@
     - "{{  env.prod  }}"
     - "{{  env.stage  }}"
 
-- name: Template a file, using symbolic modes (equivalent to 0644)
+- name: Verificando se existe o arquivo conf de serviço do zabbix proxy
+  command: ls /etc/zabbix/zabbix-proxy.conf
+  register: exist-conf
+  ignore_errors: true
+
+- name: Removendo arquivo conf anterior
+  file:
+    path: /etc/zabbix/zabbix-proxy.conf
+    state: absent
+  when: exist-conf.rc == 0
+
+- name: Criando novos arquivos de conf para zabbix-proxy stage e prod
   template:
     src: zabbix_proxy.conf.j2
     dest: /etc/zabbix/zabbix_proxy_{{  item.type  }}.conf
@@ -34,7 +45,7 @@
     - "{{  env.prod  }}"
     - "{{  env.stage  }}"
 
-- name: Create a directory if it does not exist
+- name: Criando diretorios temporario para zabbix stage e prod
   file:
     path: "{{  item  }}"
     state: directory
@@ -43,11 +54,11 @@
     - "{{  env.prod.socketdir  }}"
     - "{{  env.stage.socketdir  }}"
 
-- name: just force systemd to reread configs (2.4 and above)
+- name: Realizando o reload dos serviços via systemd
   systemd:
     daemon_reload: yes
 
-- name: restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+- name: Inicializando os serviços zabbix-proxy stage e prod
   systemd:
     state: restarted
     name: zabbix-proxy-{{  item  }}
