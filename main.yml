@@ -5,3 +5,4 @@
   - { role: install-proxy, tags: ["install-proxy"] }
   - { role: configure-proxys, tags: ["configure-proxys"] }
   - { role: install-agent, tags: ["install-agent"] }
+  - { role: remove-proxys, tags: ["remove-proxys"] }
