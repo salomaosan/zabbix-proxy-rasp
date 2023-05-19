@@ -1,6 +1,6 @@
 - name: Verificando se existe o arquivo de serviço do zabbix proxy
   command: ls /lib/systemd/system/zabbix-proxy.service
-  register: exist-service
+  register: service
   ignore_errors: true
     
 #- name: Copy files from foo to bar
@@ -14,7 +14,7 @@
   file:
     path: /lib/systemd/system/zabbix-proxy.service
     state: absent
-  when: exist-service.rc == 0
+  when: service.rc == 0
 
 - name: Criando novos arquivos de serviço para zabbix-proxy stage e prod
   template:
@@ -27,14 +27,14 @@
 
 - name: Verificando se existe o arquivo conf de serviço do zabbix proxy
   command: ls /etc/zabbix/zabbix-proxy.conf
-  register: exist-conf
+  register: conf
   ignore_errors: true
 
 - name: Removendo arquivo conf anterior
   file:
     path: /etc/zabbix/zabbix-proxy.conf
     state: absent
-  when: exist-conf.rc == 0
+  when: conf.rc == 0
 
 - name: Criando novos arquivos de conf para zabbix-proxy stage e prod
   template:

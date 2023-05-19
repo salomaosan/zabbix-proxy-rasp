@@ -1,0 +1,38 @@
+- name: Parando os serviços zabbix-proxy stage e prod
+  systemd:
+    state: stopped
+    name: zabbix-proxy-{{  item  }}
+  loop:
+    - "{{  env.prod.type  }}"
+    - "{{  env.stage.type  }}"
+
+- name: Removendo diretorios para zabbix stage e prod
+  file:
+    path: "{{  item  }}"
+    state: absent
+  loop:
+    - "{{  env.prod.socketdir  }}"
+    - "{{  env.stage.socketdir  }}"
+
+- name: Criando novos arquivos de serviço para zabbix-proxy stage e prod
+  file:
+    path: /lib/systemd/system/zabbix-proxy-{{  item.type  }}.service
+    state: absent
+  loop:
+    - "{{  env.prod  }}"
+    - "{{  env.stage  }}"
+
+- name: Criando novos arquivos de conf para zabbix-proxy stage e prod
+  template:
+    path: /etc/zabbix/zabbix_proxy_{{  item.type  }}.conf
+    state: u=rwx,g=rx,o=rx
+  loop:
+    - "{{  env.prod  }}"
+    - "{{  env.stage  }}"
+
+- name: Install zabbix-proxy-sqlite3
+  apt:
+    name: 
+      - zabbix-proxy-sqlite3
+      - zabbix-release
+    state: absent

@@ -34,7 +34,7 @@
 - name: Verificando o status do proxy
   service:
     name: zabbix-proxy
-    state: started
+    state: stopped
   register: service
 
 - debug:
