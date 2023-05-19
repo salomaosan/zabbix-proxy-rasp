@@ -14,7 +14,7 @@
     - "{{  env.prod.socketdir  }}"
     - "{{  env.stage.socketdir  }}"
 
-- name: Criando novos arquivos de serviço para zabbix-proxy stage e prod
+- name: Removendo arquivos de serviço para zabbix-proxy stage e prod
   file:
     path: /lib/systemd/system/zabbix-proxy-{{  item.type  }}.service
     state: absent
@@ -22,17 +22,22 @@
     - "{{  env.prod  }}"
     - "{{  env.stage  }}"
 
-- name: Criando novos arquivos de conf para zabbix-proxy stage e prod
-  template:
+- name: Removendo arquivos de conf para zabbix-proxy stage e prod
+  file:
     path: /etc/zabbix/zabbix_proxy_{{  item.type  }}.conf
-    state: u=rwx,g=rx,o=rx
+    state: absent
   loop:
     - "{{  env.prod  }}"
     - "{{  env.stage  }}"
 
-- name: Install zabbix-proxy-sqlite3
+- name: Executando systemd reload
+  systemd:
+    daemon_reload: yes
+
+- name: Removendo zabbix-proxy-sqlite3 e release
   apt:
     name: 
       - zabbix-proxy-sqlite3
       - zabbix-release
     state: absent
+    purge: yes

@@ -8,7 +8,7 @@
   apt:
     deb: /tmp/zabbix-release.deb
 
-- name: Install zabbix-proxy-sqlite3
+- name: Instalando binário do zabbix-proxy-sqlite3
   apt:
     name: zabbix-proxy-sqlite3
     update_cache: yes
@@ -31,7 +31,7 @@
 #    name: zabbix-proxy
 #    state: restarted
 #
-- name: Verificando o status do proxy
+- name: Mantendo serviço do proxy parado
   service:
     name: zabbix-proxy
     state: stopped
